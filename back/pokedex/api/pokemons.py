@@ -13,7 +13,7 @@ class Pokemons(Resource):
 
     def post(self):
         data = request.json
-        pokemon = create_pokemon(data['name'], data['hp'], 0, 0, 0, 0, 0)
+        pokemon = create_pokemon(data['name'], data['hp'], 10, 0, 0, 0, 0)
         return pokemon.get_small_data()
 
 

@@ -145,6 +145,14 @@ def search_pokemons(query, type):
 
 
 def edit_pokemon_stats(name, stat, new_value):
+    """
+    Edit stats of a pokemon
+    
+    :param name:
+    :param stat:
+    :param new_value:
+    :return:
+    """
     pokemon = get_pokemon_by_name(name)
 
     update = {stat: new_value}
