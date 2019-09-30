@@ -1,4 +1,4 @@
-<img src="./assets/logo.png" width=25% align="right" /> 
+<img src="./assets/logo.png" width=20% align="right" /> 
 
 # Pokedex
 
