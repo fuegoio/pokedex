@@ -1,6 +1,6 @@
 <template>
     <div class="pokemon">
-        <v-card class="mx-auto">
+        <v-card class="mx-auto" hover>
             <v-list-item three-line>
                 <v-list-item-content>
                     <v-list-item-title class="display-1 text--primary mb-1">{{ pokemon.name }}</v-list-item-title>

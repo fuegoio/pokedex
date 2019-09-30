@@ -12,7 +12,7 @@
             <template v-slot:img="{ props }">
                 <v-img
                         v-bind="props"
-                        gradient="to top right, rgba(255,146,143,.7), rgba(255,255,255,.2)"
+                        gradient="to top right, rgba(255,146,143,.9), rgba(255,255,255,.2)"
                 ></v-img>
             </template>
 
@@ -46,8 +46,6 @@
                         single-line
                         light
                         solo
-                        @keydown.enter="searchPokemons"
-                        @input="searchPokemons"
                 >
                 </v-text-field>
             </v-slide-x-transition>
@@ -78,62 +76,23 @@
 
         <v-content>
             <v-container>
-                <v-slide-y-transition
-                        mode="in-out"
-                        class="row py-2"
-                        group
-                        tag="div"
-                >
-                    <v-col cols="6" v-for="pokemon in pokemons" :key="pokemon.name">
-                        <Pokemon :pokemon="pokemon" @delete="deletePokemon(pokemon)"
-                                 @update="updatePokemon(pokemon)"/>
-                    </v-col>
-                </v-slide-y-transition>
+                <pokemon-list :search="search"></pokemon-list>
             </v-container>
         </v-content>
     </v-app>
 </template>
 
 <script>
-    import axios from 'axios';
-    import Pokemon from './components/Pokemon';
+    import PokemonList from "./components/PokemonList";
 
     export default {
         name: 'App',
         components: {
-            Pokemon,
+            PokemonList,
         },
         data: () => ({
             searchAvailable: false,
             search: null,
-            pokemons: []
-        }),
-        created() {
-            this.searchPokemons();
-        },
-        methods: {
-            searchPokemons() {
-                if (!this.search) {
-                    this.search = "";
-                }
-
-                let params = {query: this.search};
-                axios.get('http://localhost:8000/api/v1/pokemons', {params: params}).then((response) => {
-                    this.pokemons = response.data;
-                });
-            },
-            updatePokemon(pokemon) {
-                axios.get('http://localhost:8000/api/v1/pokemon/' + pokemon.name).then((response) => {
-                    let index_of_pokemon = this.pokemons.indexOf(pokemon);
-
-                    let new_pokemon = response.data;
-                    this.pokemons.splice(index_of_pokemon, 1, new_pokemon);
-                });
-            },
-            deletePokemon(pokemon) {
-                let index_of_pokemon = this.pokemons.indexOf(pokemon);
-                this.pokemons.splice(index_of_pokemon, 1);
-            }
-        }
+        })
     };
 </script>
