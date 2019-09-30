@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  database:
+    image: postgres:10
+    environment:
+      - POSTGRES_USER=pokedex
+      - POSTGRES_PASSWORD=pokedex
+    volumes:
+      - ./volumes/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
