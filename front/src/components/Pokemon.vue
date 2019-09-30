@@ -78,14 +78,11 @@
         data: () => ({
             edit: false,
             pokemon_edited: null,
-            types: ['electric', 'poison']
+            types: null
         }),
         methods: {
             startEditPokemon() {
-                axios.get('http://localhost:8000/api/v1/types').then((response) => {
-                    this.types = response.data;
-                });
-
+                this.types = [];
                 this.pokemon_edited = {
                     stats: {},
                     types: []
@@ -95,6 +92,11 @@
                 });
                 this.pokemon.types.forEach((type) => {
                     this.pokemon_edited.types.push(type);
+                    this.types.push(type);
+                });
+
+                axios.get('http://localhost:8000/api/v1/types').then((response) => {
+                    this.types = response.data;
                 });
 
                 this.edit = true;
