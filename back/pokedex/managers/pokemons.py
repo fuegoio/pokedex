@@ -1,6 +1,6 @@
 import requests
 
-from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes
+from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes, PokemonForm
 
 
 def get_pokemon_by_name(name):
@@ -26,8 +26,6 @@ def create_pokemon(name, hp, special_attack, defense, attack, special_defense, s
     pokemon = Pokemon.get_or_none(name=name)
     if pokemon is None:
         pokemon = Pokemon.create(name=name, **stats)
-    else:
-        pokemon.update(**stats).execute()
 
     return pokemon
 
@@ -49,8 +47,6 @@ def load_pokemon_from_api(name):
     pokemon = Pokemon.get_or_none(name=name)
     if pokemon is None:
         pokemon = Pokemon.create(name=name, sprite_front=sprite_front, sprite_back=sprite_back, **stats)
-    else:
-        pokemon.update(**stats).execute()
     return pokemon
 
 
@@ -66,9 +62,6 @@ def load_pokemon_types_from_api(name):
         type_name = api_type['type']['name']
 
         type = Type.get_or_none(name=type_name)
-        if type is None:
-            type = Type.create(name=type_name, url=api_type['type']['url'])
-
         pokemon_type = PokemonTypes.create(pokemon=pokemon, type=type, slot=api_type['slot'])
 
         types.append(pokemon_type)
@@ -88,9 +81,6 @@ def load_pokemon_abilities_from_api(name):
         ability_name = api_ability['ability']['name']
 
         ability = Ability.get_or_none(name=ability_name)
-        if ability is None:
-            ability = Ability.create(name=ability_name, url=api_ability['ability']['url'])
-
         pokemon_ability = PokemonAbilities.create(pokemon=pokemon, ability=ability,
                                                   is_hidden=api_ability['is_hidden'],
                                                   slot=api_ability['slot'])
@@ -100,7 +90,28 @@ def load_pokemon_abilities_from_api(name):
     return abilities
 
 
-def load_all_pokemons_from_api(abilities, types):
+def load_pokemon_form_from_api(name):
+    request = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
+    pokemon_data = request.json()
+
+    pokemon = get_pokemon_by_name(name)
+    PokemonForm.delete().where(PokemonForm.pokemon == pokemon).execute()
+
+    forms = []
+    for api_form in pokemon_data['forms']:
+        form_name = api_form['name']
+
+        ability = PokemonForm.get_or_none(name=ability_name)
+        pokemon_ability = PokemonAbilities.create(pokemon=pokemon, ability=ability,
+                                                  is_hidden=api_ability['is_hidden'],
+                                                  slot=api_ability['slot'])
+
+        abilities.append(pokemon_ability)
+
+    return abilities
+
+
+def load_all_pokemons_from_api():
     i = 0
 
     next_page = 'https://pokeapi.co/api/v2/pokemon/'
@@ -112,10 +123,8 @@ def load_all_pokemons_from_api(abilities, types):
 
         for pokemon in pokemons_data['results']:
             load_pokemon_from_api(pokemon['name'])
-            if abilities:
-                load_pokemon_abilities_from_api(pokemon['name'])
-            if types:
-                load_pokemon_types_from_api(pokemon['name'])
+            load_pokemon_abilities_from_api(pokemon['name'])
+            load_pokemon_types_from_api(pokemon['name'])
             i += 1
 
         print(f'{i} pokemons loaded.')

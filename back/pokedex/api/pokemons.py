@@ -1,3 +1,5 @@
+import time
+
 from flask import request
 from flask_restful import Resource
 
@@ -24,6 +26,9 @@ class Pokemon(Resource):
             return {'msg': 'Not found'}, 404
 
         return pokemon.get_small_data()
+
+    def patch(self, pokemon_name):
+        return 'panic', 500
 
     def delete(self, pokemon_name):
         result = delete_pokemon(pokemon_name)
