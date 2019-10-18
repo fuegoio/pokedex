@@ -1,9 +1,13 @@
 from peewee import *
+from playhouse.shortcuts import model_to_dict
 
 from .database import db
 
 
 class CommonModel(Model):
+    def get_small_data(self):
+        return model_to_dict(self, recurse=False, backrefs=False)
+
     class Meta:
         database = db
         schema = 'pokemon'
@@ -35,6 +39,18 @@ class Pokemon(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
+
+    sprite_back = CharField()
+    sprite_front = CharField()
+
+    @property
+    def stats(self):
+        return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
+                'special-defense': self.special_defense, 'speed': self.speed}
+
+    def get_small_data(self):
+        return {"id": self.id, "name": self.name, 'stats': self.stats, 'sprite_back': self.sprite_back,
+                'sprite_front': self.sprite_front}
 
 
 class Ability(CommonModel):

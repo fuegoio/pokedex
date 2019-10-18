@@ -1,22 +1,12 @@
 import requests
+from playhouse.shortcuts import update_model_from_dict
 
-from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes, PokemonForm
+from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes
 
 
 def get_pokemon_by_name(name):
     pokemon = Pokemon.get_or_none(name=name)
     return pokemon
-
-
-def get_pokemons_by_hp(min_hp):
-    results = []
-
-    pokemons = Pokemon.select()
-    for pokemon in pokemons:
-        if pokemon.hp >= min_hp:
-            results.append(pokemon)
-
-    return results
 
 
 def create_pokemon(name, hp, special_attack, defense, attack, special_defense, speed):
@@ -45,8 +35,13 @@ def load_pokemon_from_api(name):
     sprite_back = pokemon_data['sprites']['back_default']
 
     pokemon = Pokemon.get_or_none(name=name)
+    data = {'sprite_front': sprite_front, 'sprite_back': sprite_back, **stats}
     if pokemon is None:
-        pokemon = Pokemon.create(name=name, sprite_front=sprite_front, sprite_back=sprite_back, **stats)
+        pokemon = Pokemon.create(name=name, **data)
+    else:
+        update_model_from_dict(pokemon, data)
+        pokemon.save()
+
     return pokemon
 
 
@@ -81,27 +76,6 @@ def load_pokemon_abilities_from_api(name):
         ability_name = api_ability['ability']['name']
 
         ability = Ability.get_or_none(name=ability_name)
-        pokemon_ability = PokemonAbilities.create(pokemon=pokemon, ability=ability,
-                                                  is_hidden=api_ability['is_hidden'],
-                                                  slot=api_ability['slot'])
-
-        abilities.append(pokemon_ability)
-
-    return abilities
-
-
-def load_pokemon_form_from_api(name):
-    request = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
-    pokemon_data = request.json()
-
-    pokemon = get_pokemon_by_name(name)
-    PokemonForm.delete().where(PokemonForm.pokemon == pokemon).execute()
-
-    forms = []
-    for api_form in pokemon_data['forms']:
-        form_name = api_form['name']
-
-        ability = PokemonForm.get_or_none(name=ability_name)
         pokemon_ability = PokemonAbilities.create(pokemon=pokemon, ability=ability,
                                                   is_hidden=api_ability['is_hidden'],
                                                   slot=api_ability['slot'])
@@ -154,26 +128,10 @@ def search_pokemons(query, type):
 
 
 def edit_pokemon_stats(name, stat, new_value):
-    """
-    Edit stats of a pokemon
-    
-    :param name:
-    :param stat:
-    :param new_value:
-    :return:
-    """
     pokemon = get_pokemon_by_name(name)
 
     update = {stat: new_value}
     pokemon.update(**update).execute()
-
-    return pokemon
-
-
-def edit_pokemon_hp(name, new_hp):
-    pokemon = get_pokemon_by_name(name)
-    pokemon.hp = new_hp
-    pokemon.save()
 
     return pokemon
 
