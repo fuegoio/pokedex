@@ -40,17 +40,31 @@ class Pokemon(CommonModel):
     special_defense = FloatField()
     speed = FloatField()
 
-    sprite_back = CharField()
-    sprite_front = CharField()
+    #sprite_back = CharField()
+    #sprite_front = CharField()
 
     @property
     def stats(self):
         return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
                 'special-defense': self.special_defense, 'speed': self.speed}
 
-    def get_small_data(self):
-        return {"id": self.id, "name": self.name, 'stats': self.stats, 'sprite_back': self.sprite_back,
-                'sprite_front': self.sprite_front}
+    def get_small_data(self, ask_effect):
+        # return {"id": self.id, "name": self.name, 'stats': self.stats,'sprite_back': self.sprite_back,
+        #         'sprite_front': self.sprite_front}
+        if ask_effect is True:
+            print("Hello")
+            return {"id": self.id, "name": self.name, **self.stats, "abilities_effects": self.get_abilities_effect()}
+        else:
+            return {"id": self.id, "name": self.name, **self.stats}
+
+    def get_abilities_effect(self):
+        abilities_effects_list= []
+        for pokemon_ability in self.abilities:
+            effects_list=[]
+            for ability_effect in pokemon_ability.ability.effects:
+                effects_list.append(ability_effect.effect.effect)
+            abilities_effects_list.append(effects_list)
+        return abilities_effects_list
 
 
 class Ability(CommonModel):
@@ -62,14 +76,14 @@ class Ability(CommonModel):
 
 class AbilityEffects(CommonModel):
     id = PrimaryKeyField()
-    ability = ForeignKeyField(Ability)
-    effect = ForeignKeyField(VerboseEffect)
+    ability = ForeignKeyField(Ability, backref='effects')
+    effect = ForeignKeyField(VerboseEffect, backref='abilities')
 
 
 class PokemonAbilities(CommonModel):
     id = PrimaryKeyField()
-    pokemon = ForeignKeyField(Pokemon)
-    ability = ForeignKeyField(Ability)
+    pokemon = ForeignKeyField(Pokemon, backref='abilities')
+    ability = ForeignKeyField(Ability, backref='pokemons')
     is_hidden = BooleanField()
     slot = IntegerField()
 
@@ -82,8 +96,8 @@ class Type(CommonModel):
 
 class PokemonTypes(CommonModel):
     id = PrimaryKeyField()
-    pokemon = ForeignKeyField(Pokemon)
-    type = ForeignKeyField(Type)
+    pokemon = ForeignKeyField(Pokemon, backref='types')
+    type = ForeignKeyField(Type, backref='pokemons')
     slot = IntegerField()
 
 

@@ -4,10 +4,12 @@ from pokedex.models.pokemon import Type, Generation
 
 
 def get_types(search=None, unused=False):
+    types = []
+
     if search is None:
         search = ""
         
-    types = []
+
     for type in Type.select():
         if search in type.name:
             types.append(type)
@@ -49,3 +51,16 @@ def load_types_from_api():
         print(f'{i} type loaded.')
 
     return i
+
+def get_list_types(ask_pokemons, search=None, unused=False):
+
+    if unused:
+        types = [typex.name for typex in Type.select() if len(typex.pokemons) == 0]
+
+    elif search != None:
+        types = [typex.name for typex in Type.select() if typex.pokemons == search]
+
+    else:
+        types = [typex.name for typex in Type.select()]
+
+    return types
