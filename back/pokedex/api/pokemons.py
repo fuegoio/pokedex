@@ -32,3 +32,4 @@ class Pokemon(Resource):
         result = delete_pokemon(pokemon_name)
         return result
 
+

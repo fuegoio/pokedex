@@ -71,6 +71,10 @@ def get_pokemons_from_specie(specie_id):
     return pokemons
 
 
+def get_specie_by_name(name):
+    specie = PokemonSpecies.get_or_none(name=name)
+    return specie
+
 # def add_specie(name, generation_name):
 #     # generation = Generation.get_or_none(Generation.name == generation_name)
 #     # if generation is None:
@@ -78,3 +82,6 @@ def get_pokemons_from_specie(specie_id):
 #
 #     new_specie = PokemonSpecies.create(name=name, generation=generation)
 #     return new_specie
+
+def add_pokemon_to_specie(specie,pokemon):
+    PokemonSpeciesVariety.create(pokemon_species=specie.id, is_default='false', pokemon=pokemon.id)
