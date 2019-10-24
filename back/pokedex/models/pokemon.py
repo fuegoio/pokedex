@@ -49,7 +49,7 @@ class Pokemon(CommonModel):
                 'special-defense': self.special_defense, 'speed': self.speed}
 
     def get_small_data(self):
-        return {"id": self.id, "name": self.name, 'stats': self.stats, 'sprite_back': self.sprite_back,
+        return {"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
                 'sprite_front': self.sprite_front}
 
 
@@ -78,6 +78,10 @@ class Type(CommonModel):
     id = PrimaryKeyField()
     name = CharField()
     generation = ForeignKeyField(Generation)
+
+    def get_small_data(self):
+        return {'id': self.id, 'name': self.name,
+                'generation': self.generation.name}
 
 
 class PokemonTypes(CommonModel):
