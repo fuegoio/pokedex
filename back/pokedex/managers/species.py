@@ -47,3 +47,41 @@ def load_pokemons_species_from_api():
         print(f'{i} species loaded.')
 
     return i
+
+
+def get_species(search=None, unused=False):
+    if search is None:
+        search = ""
+
+    species = []
+    for specie in PokemonSpecies.select():
+        if search in specie.name:
+            species.append(specie)
+
+    if unused:
+        species = [specie for specie in species if len(specie.pokemons) == 0]
+    return species
+
+
+def get_pokemons_from_specie(specie_id):
+    pokemons = []
+    pokemon_species_varieties = PokemonSpeciesVariety.select(PokemonSpeciesVariety, Pokemon).join(Pokemon).where(PokemonSpeciesVariety.pokemon_species == specie_id)
+    for pokemon_specie_variety in pokemon_species_varieties:
+        pokemons.append(pokemon_specie_variety.pokemon)
+    return pokemons
+
+
+def get_specie_by_name(name):
+    specie = PokemonSpecies.get_or_none(name=name)
+    return specie
+
+# def add_specie(name, generation_name):
+#     # generation = Generation.get_or_none(Generation.name == generation_name)
+#     # if generation is None:
+#     #     generation = Generation.create(name=generation_name)
+#
+#     new_specie = PokemonSpecies.create(name=name, generation=generation)
+#     return new_specie
+
+def add_pokemon_to_specie(specie,pokemon):
+    PokemonSpeciesVariety.create(pokemon_species=specie.id, is_default='false', pokemon=pokemon.id)

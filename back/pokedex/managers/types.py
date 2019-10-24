@@ -1,6 +1,6 @@
 import requests
 
-from pokedex.models.pokemon import Type, Generation
+from pokedex.models.pokemon import Type, Generation, PokemonTypes, Pokemon
 
 
 def get_types(search=None, unused=False):
@@ -8,15 +8,24 @@ def get_types(search=None, unused=False):
 
     if search is None:
         search = ""
-        
 
+    types = []
     for type in Type.select():
         if search in type.name:
             types.append(type)
-            
+
     if unused:
         types = [type for type in types if len(type.pokemons) == 0]
     return types
+
+
+def add_type(name, generation_name):
+    generation = Generation.get_or_none(Generation.name == generation_name)
+    if generation is None:
+        generation = Generation.create(name=generation_name)
+
+    new_type = Type.create(name=name, generation=generation)
+    return new_type
 
 
 def load_type_from_api(name):
@@ -52,15 +61,10 @@ def load_types_from_api():
 
     return i
 
-def get_list_types(ask_pokemons, search=None, unused=False):
 
-    if unused:
-        types = [typex.name for typex in Type.select() if len(typex.pokemons) == 0]
-
-    elif search != None:
-        types = [typex.name for typex in Type.select() if typex.pokemons == search]
-
-    else:
-        types = [typex.name for typex in Type.select()]
-
-    return types
+def get_pokemons_from_type(type_id):
+    pokemons = []
+    pokemon_types = PokemonTypes.select(PokemonTypes, Pokemon).join(Pokemon).where(PokemonTypes.type == type_id)
+    for pokemon_type in pokemon_types:
+        pokemons.append(pokemon_type.pokemon)
+    return pokemons

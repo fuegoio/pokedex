@@ -48,14 +48,9 @@ class Pokemon(CommonModel):
         return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
                 'special-defense': self.special_defense, 'speed': self.speed}
 
-    def get_small_data(self, ask_effect):
-        # return {"id": self.id, "name": self.name, 'stats': self.stats,'sprite_back': self.sprite_back,
-        #         'sprite_front': self.sprite_front}
-        if ask_effect is True:
-            print("Hello")
-            return {"id": self.id, "name": self.name, **self.stats, "abilities_effects": self.get_abilities_effect()}
-        else:
-            return {"id": self.id, "name": self.name, **self.stats}
+    def get_small_data(self):
+        return {"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
+                'sprite_front': self.sprite_front}
 
     def get_abilities_effect(self):
         abilities_effects_list= []
@@ -93,6 +88,10 @@ class Type(CommonModel):
     name = CharField()
     generation = ForeignKeyField(Generation)
 
+    def get_small_data(self):
+        return {'id': self.id, 'name': self.name,
+                'generation': self.generation.name}
+
 
 class PokemonTypes(CommonModel):
     id = PrimaryKeyField()
@@ -126,6 +125,12 @@ class PokemonSpecies(CommonModel):
     capture_rate = IntegerField()
     base_happiness = IntegerField()
     is_baby = BooleanField()
+
+    def get_small_data(self):
+        return {'id': self.id, 'name': self.name,
+                'order': self.order, 'gender_rate': self.gender_rate,
+                'capture_rate': self.capture_rate, 'base_happiness': self.base_happiness,
+                'is_baby': self.is_baby}
 
 
 class PokemonSpeciesVariety(CommonModel):
