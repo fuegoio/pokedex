@@ -39,9 +39,8 @@ class Pokemon(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
-
-    #sprite_back = CharField()
-    #sprite_front = CharField()
+    sprite_back = CharField()
+    sprite_front = CharField()
 
     @property
     def stats(self):

@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 
 from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, create_pokemon, delete_pokemon
-from pokedex.managers.types import get_list_types, get_types
+# from pokedex.managers.types import get_list_types, get_types
 
 class Pokemons(Resource):
     def get(self):
@@ -34,18 +34,18 @@ class Pokemon(Resource):
         result = delete_pokemon(pokemon_name)
         return result
 
-
-class Types(Resource):
-    def get(self):
-        data=[]
-        ask_pokemons = bool(request.args['pokemons'])
-        types=get_types()
-        if ask_pokemons is True:
-            for type in types:
-                pokemon_matching=search_pokemons('all', type.name)
-                pokemon_names = [p.name for p in pokemon_matching]
-                data.append({'type': type.name, 'pokemons' : pokemon_names})
-        else:
-            data=[type.name for type in types]
-
-        return data
+#
+# class Types(Resource):
+#     def get(self):
+#         data=[]
+#         ask_pokemons = bool(request.args['pokemons'])
+#         types=get_types()
+#         if ask_pokemons is True:
+#             for type in types:
+#                 pokemon_matching=search_pokemons('all', type.name)
+#                 pokemon_names = [p.name for p in pokemon_matching]
+#                 data.append({'type': type.name, 'pokemons' : pokemon_names})
+#         else:
+#             data=[type.name for type in types]
+#
+#         return data
