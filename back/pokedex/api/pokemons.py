@@ -31,3 +31,4 @@ class Pokemon(Resource):
     def delete(self, pokemon_name):
         result = delete_pokemon(pokemon_name)
         return result
+

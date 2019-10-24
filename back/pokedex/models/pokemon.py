@@ -117,6 +117,12 @@ class PokemonSpecies(CommonModel):
     base_happiness = IntegerField()
     is_baby = BooleanField()
 
+    def get_small_data(self):
+        return {'id': self.id, 'name': self.name,
+                'order': self.order, 'gender_rate': self.gender_rate,
+                'capture_rate': self.capture_rate, 'base_happiness': self.base_happiness,
+                'is_baby': self.is_baby}
+
 
 class PokemonSpeciesVariety(CommonModel):
     id = PrimaryKeyField()
