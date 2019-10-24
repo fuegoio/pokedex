@@ -17,11 +17,26 @@ class Species(Resource):
                 specie_result['pokemons'] = []
                 pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
                 for pokemon in pokemons_of_this_specie:
-                    pokemon_result = {'id': pokemon.id, 'name': pokemon.name}
-                    specie_result['pokemons'].append(pokemon_result)
+                    specie_result['pokemons'].append(pokemon.name)
 
             result.append(specie_result)
         return result
+
+class Specie(Resource):
+    def get(self,specie_name):
+        species = get_species(specie_name)
+        result = []
+        for specie in species:
+            specie_result = {'specie': specie.name}#specie.get_small_data()
+            specie_result['pokemons'] = []
+            pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
+            for pokemon in pokemons_of_this_specie:
+                specie_result['pokemons'].append(pokemon.get_small_data())
+            result.append(specie_result)
+
+        return result
+
+
 
     # def put(self):
     #     name = request.json['name']

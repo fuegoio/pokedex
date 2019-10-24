@@ -5,7 +5,7 @@ from pokedex.models.database import db
 
 from .pokemons import Pokemon, Pokemons
 from .types import Types
-from .species import Species
+from .species import Species, Specie
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -23,6 +23,7 @@ def register_api(app):
     api.add_resource(Pokemons, '/pokemons')
     api.add_resource(Pokemon, '/pokemon/<pokemon_name>')
     api.add_resource(Species, '/species')
+    api.add_resource(Specie, '/specie/<specie_name>')
     api.add_resource(Types, '/types')
 
     app.register_blueprint(api_bp, url_prefix="/api/v1")
