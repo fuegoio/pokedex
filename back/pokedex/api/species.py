@@ -55,6 +55,30 @@ class Pokemon_Specie(Resource):
         return result
 
 
+class Pokemon_SpecieII(Resource):
+
+    def patch(self):
+        pokemon_name = request.json['pokemon']
+        pokemon = get_pokemon_by_name(pokemon_name)
+        if pokemon is None:
+            return {'msg': 'Pokeon not found'}, 404
+        specie_name = request.json['specie']
+        specie = get_specie_by_name(specie_name)
+        if specie is None:
+            return {'msg': 'Specie not found'}, 404
+        add_pokemon_to_specie(specie, pokemon)
+        result = []
+        specie_result = {'specie': specie.name}
+        specie_result['pokemons'] = []
+        pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
+        for pokemon in pokemons_of_this_specie:
+            specie_result['pokemons'].append(pokemon.get_small_data())
+        result.append(specie_result)
+
+        return result
+
+
+
     # def put(self):
     #     name = request.json['name']
     #     generation_name = request.json['generation']
