@@ -30,7 +30,7 @@ def register_api(app):
     @api_bp.teardown_request
     def after_request(exception=None):
         db.close()
-        print(get_my_ip())
+        #print(get_my_ip())
 
 
     api.add_resource(Pokemons, '/pokemons')

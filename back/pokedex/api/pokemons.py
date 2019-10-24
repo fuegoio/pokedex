@@ -6,12 +6,10 @@ from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, crea
 
 class Pokemons(Resource):
     def get(self):
-
         query = request.args['query']
-        # ask_effect = bool(request.args['effect'])
-
+        ask_effect = request.args.get('effect', 'false') == 'true'
         pokemons_matching = search_pokemons(query, type=None)
-        pokemons = [pokemon.get_small_data() for pokemon in pokemons_matching]
+        pokemons = [pokemon.get_small_data(ask_effect) for pokemon in pokemons_matching]
         return pokemons
 
     def post(self):

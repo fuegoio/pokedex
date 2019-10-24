@@ -47,8 +47,8 @@ class Pokemon(CommonModel):
         return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
                 'special-defense': self.special_defense, 'speed': self.speed}
 
-    def get_small_data(self,ask_effect='false'):
-        if ask_effect:
+    def get_small_data(self,ask_effect):
+        if ask_effect is True:
             return {"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
                     'sprite_front': self.sprite_front,'effects': self.get_abilities_effect()}
         else:
