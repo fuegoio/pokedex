@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_restful import Api
 
 
@@ -17,7 +17,6 @@ def register_api(app):
 
     @app.route("/")
     def get_my_ip():
-        # # return jsonify({'ip': request.remote_addr}), 200
         ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         request_data={'method': request.method, 'url':request.url,'ip':ip, 'parameters':request.args}
         return request_data
@@ -27,10 +26,11 @@ def register_api(app):
         db.connect(reuse_if_open=True)
         add_request_history(get_my_ip())
 
+
     @api_bp.teardown_request
     def after_request(exception=None):
         db.close()
-        #print(get_my_ip())
+
 
 
     api.add_resource(Pokemons, '/pokemons')
