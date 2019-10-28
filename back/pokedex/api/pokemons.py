@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 
+from pokedex.managers.analytics import add_pokemon_search_history
 from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, create_pokemon, delete_pokemon
 
 
@@ -9,6 +10,9 @@ class Pokemons(Resource):
         query = request.args['query']
         pokemons_matching = search_pokemons(query, type=None)
         pokemons = [pokemon.get_small_data() for pokemon in pokemons_matching]
+
+        add_pokemon_search_history(request.remote_addr, query)
+
         return pokemons
 
     def post(self):
