@@ -130,11 +130,26 @@ class PokemonSpecies(CommonModel):
     base_happiness = IntegerField()
     is_baby = BooleanField()
 
+    def get_egg_groups(self):
+        egg_group_list= []
+        for egg_specie in self.egg_groups:
+            #print(egg_specie.egg_group.name)
+            egg_group_list.append(egg_specie.egg_group.name)
+
+            # effects_list=[]
+            # for ability_effect in pokemon_ability.ability.effects:
+            #     effects_list.append(ability_effect.effect.effect)
+            # abilities_effects_list.append(effects_list)
+        return egg_group_list
+
+
+
     def get_small_data(self):
+
         return {'id': self.id, 'name': self.name,
                 'order': self.order, 'gender_rate': self.gender_rate,
                 'capture_rate': self.capture_rate, 'base_happiness': self.base_happiness,
-                'is_baby': self.is_baby}
+                'is_baby': self.is_baby, 'egg_groups': self.get_egg_groups()}
 
 
 class PokemonSpeciesVariety(CommonModel):
@@ -146,8 +161,8 @@ class PokemonSpeciesVariety(CommonModel):
 
 class PokemonSpeciesEggGroups(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies)
-    egg_group = ForeignKeyField(EggGroup)
+    pokemon_species = ForeignKeyField(PokemonSpecies, backref='egg_groups')
+    egg_group = ForeignKeyField(EggGroup, backref='pokemon_species')
 
 
 with db:

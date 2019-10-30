@@ -49,7 +49,7 @@ def load_pokemons_species_from_api():
     return i
 
 
-def get_species(search=None, unused=False):
+def get_species(egg_group=None, search=None, unused=False):
     if search is None:
         search = ""
 
@@ -60,6 +60,26 @@ def get_species(search=None, unused=False):
 
     if unused:
         species = [specie for specie in species if len(specie.pokemons) == 0]
+
+    if egg_group is not None:
+        filtered_species = []
+        for specie in species:
+            # types = [t.type.name for t in pokemon.types]
+            eggroups = []
+
+            poke_egg_group_species=PokemonSpeciesEggGroups.select().where(PokemonSpeciesEggGroups.pokemon_species==specie)
+            for egg_specie in poke_egg_group_species:
+
+                egggroup_name = egg_specie.egg_group.name
+                eggroups.append(egggroup_name)
+
+            if egg_group in eggroups:
+                filtered_species.append(specie)
+        return filtered_species
+
+
+
+
     return species
 
 
@@ -115,3 +135,11 @@ def add_variety(specie_id, pokemon_id, is_default=False):
         variety.save()
 
     return variety
+
+def get_egg_groups():
+    egggroup=EggGroup.select()
+    return egggroup
+
+def get_egg_group_by_name(name):
+    egggroup = EggGroup.select(EggGroup.name==name)
+    return egggroup

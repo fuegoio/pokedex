@@ -6,6 +6,7 @@ from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, crea
 
 class Pokemons(Resource):
     def get(self):
+        print("ciao")
         query = request.args['query']
         ask_effect = request.args.get('effect', 'false') == 'true'
         pokemons_matching = search_pokemons(query, type=None)
@@ -32,6 +33,9 @@ class Pokemon(Resource):
     def delete(self, pokemon_name):
         result = delete_pokemon(pokemon_name)
         return result
+
+
+
 
 #
 # class Types(Resource):

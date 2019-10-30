@@ -7,7 +7,7 @@ from pokedex.managers.users import add_request_history
 
 from .pokemons import Pokemon, Pokemons
 from .types import Types
-from .species import Species, Specie
+from .species import Species, Specie, EggGroups
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -31,11 +31,10 @@ def register_api(app):
     def after_request(exception=None):
         db.close()
 
-
-
     api.add_resource(Pokemons, '/pokemons')
     api.add_resource(Pokemon, '/pokemon/<pokemon_name>')
     api.add_resource(Species, '/species')
     api.add_resource(Specie, '/specie/<specie_id>')
     api.add_resource(Types, '/types')
+    api.add_resource(EggGroups, '/egg-groups')
     app.register_blueprint(api_bp, url_prefix="/api/v1")
