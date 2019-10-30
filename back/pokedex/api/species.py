@@ -37,8 +37,9 @@ class Specie(Resource):
 
 class EggGroups(Resource):
     def get(self):
+        show_species = request.args.get('species', 'false') == 'true'
         list_egg_groups=get_egg_groups()
-        results = [egg_group.name for egg_group in list_egg_groups]
+        results = [egg_group.get_small_data(show_species) for egg_group in list_egg_groups]
 
         return results
 

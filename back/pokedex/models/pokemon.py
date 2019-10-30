@@ -121,6 +121,23 @@ class EggGroup(CommonModel):
     name = CharField()
 
 
+    def get_species(self):
+        species_list=[]
+        egg_species=self.pokemon_species_eggs
+        for egg_specie in egg_species:
+            species_list.append(egg_specie.pokemon_species.name)
+
+
+        return species_list
+
+
+    def get_small_data(self,show_species='false'):
+        if show_species is True:
+            return {"id": self.id, "name": self.name, 'species': self.get_species()}
+        else:
+            return {"id": self.id, "name": self.name}
+
+
 class PokemonSpecies(CommonModel):
     id = PrimaryKeyField()
     name = CharField()
@@ -132,14 +149,9 @@ class PokemonSpecies(CommonModel):
 
     def get_egg_groups(self):
         egg_group_list= []
-        for egg_specie in self.egg_groups:
-            #print(egg_specie.egg_group.name)
+        for egg_specie in self.egg_groups_species:
             egg_group_list.append(egg_specie.egg_group.name)
 
-            # effects_list=[]
-            # for ability_effect in pokemon_ability.ability.effects:
-            #     effects_list.append(ability_effect.effect.effect)
-            # abilities_effects_list.append(effects_list)
         return egg_group_list
 
 
@@ -161,8 +173,8 @@ class PokemonSpeciesVariety(CommonModel):
 
 class PokemonSpeciesEggGroups(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies, backref='egg_groups')
-    egg_group = ForeignKeyField(EggGroup, backref='pokemon_species')
+    pokemon_species = ForeignKeyField(PokemonSpecies, backref='egg_groups_species')
+    egg_group = ForeignKeyField(EggGroup, backref='pokemon_species_eggs')
 
 
 with db:
