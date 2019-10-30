@@ -143,3 +143,16 @@ def get_egg_groups():
 def get_egg_group_by_name(name):
     egggroup = EggGroup.select(EggGroup.name==name)
     return egggroup
+
+
+def get_species_of_egg_groups(egg_groups):
+    species_join_eggs = PokemonSpeciesEggGroups.select(PokemonSpeciesEggGroups, PokemonSpecies).join(PokemonSpecies).where(
+        PokemonSpeciesEggGroups.egg_group << egg_groups)
+
+    species_by_egg = {}
+    for specie_egg in species_join_eggs:
+        if specie_egg.egg_group.id not in species_by_egg.keys():
+            species_by_egg[specie_egg.egg_group.id] = []
+        species_by_egg[specie_egg.egg_group.id].append(specie_egg.pokemon_species)
+
+    return species_by_egg

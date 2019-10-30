@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource
 
-from pokedex.managers.species import get_species, get_species, get_pokemons_of_species, get_specie, add_variety, get_egg_groups #get_pokemons_from_specie, add_pokemon_to_specie, get_specie_by_name#, add_specie
+from pokedex.managers.species import get_species, get_species, get_pokemons_of_species, get_specie, add_variety, get_egg_groups, get_species_of_egg_groups #get_pokemons_from_specie, add_pokemon_to_specie, get_specie_by_name#, add_specie
 #from pokedex.managers.pokemons import get_pokemon_by_name
 
 class Species(Resource):
@@ -39,7 +39,9 @@ class EggGroups(Resource):
     def get(self):
         show_species = request.args.get('species', 'false') == 'true'
         show_pokemons = request.args.get('pokemons', 'false') == 'true'
+
         list_egg_groups=get_egg_groups()
+        print(get_species_of_egg_groups(list_egg_groups))
         results = [egg_group.get_small_data(show_species,show_pokemons) for egg_group in list_egg_groups]
 
         return results
