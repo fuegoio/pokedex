@@ -36,6 +36,6 @@ def register_api(app):
     api.add_resource(Pokemons, '/pokemons')
     api.add_resource(Pokemon, '/pokemon/<pokemon_name>')
     api.add_resource(Species, '/species')
-    api.add_resource(Specie, '/specie/<specie_name>')
+    api.add_resource(Specie, '/specie/<specie_id>')
     api.add_resource(Types, '/types')
     app.register_blueprint(api_bp, url_prefix="/api/v1")
