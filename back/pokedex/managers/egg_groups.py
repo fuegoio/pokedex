@@ -1,6 +1,6 @@
 import requests
 
-from pokedex.models.pokemon import EggGroup
+from pokedex.models.pokemon import EggGroup, Pokemon, PokemonSpeciesVariety, PokemonSpecies, PokemonSpeciesEggGroups
 
 
 def load_egg_group_from_api(name):
@@ -31,3 +31,19 @@ def load_egg_groups_from_api():
         print(f'{i} egg groups loaded.')
 
     return i
+
+
+def get_egg_groups():
+    return EggGroup.select()
+
+
+def get_pokemons_from_egg_group(egg_group_id):
+    egg_group = EggGroup.get_by_id(egg_group_id)
+
+    pokemons = Pokemon.select() \
+        .join(PokemonSpeciesVariety) \
+        .join(PokemonSpecies) \
+        .join(PokemonSpeciesEggGroups) \
+        .where(PokemonSpeciesEggGroups.egg_group == egg_group)
+
+    return pokemons
