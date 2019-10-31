@@ -8,7 +8,7 @@ def get_types(search=None, unused=False):
         search = ""
 
     types = []
-    for type in Type.select():
+    for type in Type.select().limit(10):
         if search in type.name:
             types.append(type)
 

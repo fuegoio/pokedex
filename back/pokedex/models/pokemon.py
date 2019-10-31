@@ -79,15 +79,11 @@ class Type(CommonModel):
     name = CharField()
     generation = ForeignKeyField(Generation)
 
-    def get_small_data(self):
-        return {'id': self.id, 'name': self.name,
-                'generation': self.generation.name}
-
 
 class PokemonTypes(CommonModel):
     id = PrimaryKeyField()
     pokemon = ForeignKeyField(Pokemon)
-    type = ForeignKeyField(Type)
+    type = ForeignKeyField(Type, backref='pokemon_types')
     slot = IntegerField()
 
 
@@ -117,17 +113,24 @@ class PokemonSpecies(CommonModel):
     base_happiness = IntegerField()
     is_baby = BooleanField()
 
+    def get_small_data(self):
+        data = model_to_dict(self, recurse=False, backrefs=False)
+        data['egg_groups'] = []
+        for pokemon_species_egg_group in self.egg_groups:
+            data['egg_groups'].append(pokemon_species_egg_group.egg_group.name)
+        return data
+
 
 class PokemonSpeciesVariety(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies)
+    pokemon_species = ForeignKeyField(PokemonSpecies, backref='varieties')
     is_default = BooleanField()
     pokemon = ForeignKeyField(Pokemon)
 
 
 class PokemonSpeciesEggGroups(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies)
+    pokemon_species = ForeignKeyField(PokemonSpecies, backref='egg_groups')
     egg_group = ForeignKeyField(EggGroup)
 
 

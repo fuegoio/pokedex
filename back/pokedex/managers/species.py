@@ -1,3 +1,5 @@
+from typing import List
+
 import requests
 
 from pokedex.models.pokemon import PokemonSpecies, EggGroup, PokemonSpeciesEggGroups, PokemonSpeciesVariety, Pokemon
@@ -20,7 +22,7 @@ def load_pokemon_species_from_api(name):
     PokemonSpeciesEggGroups.delete().where(PokemonSpeciesEggGroups.pokemon_species == species).execute()
     for api_egg_group in data['egg_groups']:
         egg_group = EggGroup.get_or_none(name=api_egg_group['name'])
-        link = PokemonSpeciesEggGroups.create(pokemon_species=species, egg_group=egg_group)
+        PokemonSpeciesEggGroups.create(pokemon_species=species, egg_group=egg_group)
 
     PokemonSpeciesVariety.delete().where(PokemonSpeciesVariety.pokemon_species == species).execute()
     for variety in data['varieties']:
@@ -49,8 +51,14 @@ def load_pokemons_species_from_api():
     return i
 
 
-def get_species():
-    species = PokemonSpecies.select()
+def get_species(egg_group=None, limit=None):
+    species = PokemonSpecies.select().limit(limit)
+
+    if egg_group is not None:
+        egg_group = EggGroup.get_or_none(name=egg_group)
+        if egg_group is not None:
+            species = species.join(PokemonSpeciesEggGroups).where(PokemonSpeciesEggGroups.egg_group == egg_group)
+
     return species
 
 
