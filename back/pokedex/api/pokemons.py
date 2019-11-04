@@ -10,7 +10,7 @@ class Pokemons(Resource):
 
         query = request.args['query']
         # query = request.args.get('query', "")
-        type_query= request.args.get('type', "")
+        type_query= request.args.get('type', None)
         # type_query = request.args['type']
 
         ask_effect = request.args.get('effect', 'false') == 'true'

@@ -24,6 +24,7 @@ class UserAgentHistory(CommonModel):
     url = CharField()
     method = CharField()
     parameters = CharField(null=True)
+    user_agent=CharField()
 
 
 

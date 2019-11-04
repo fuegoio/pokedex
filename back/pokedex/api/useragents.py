@@ -6,11 +6,13 @@ from pokedex.managers.analytics import get_user_history
 
 class UserAgent(Resource):
     def get(self):
-        user=request.remote_addr
+        # user=request.remote_addr
+        # print(request.user_agent)
+        # UserAgent
 
-        history=get_user_history(user)
-        result=[]
-        for elem in history:
-            result.append(elem.get_small_data())
-
-        return result
+        results=get_user_history()
+        # result=[]
+        # for elem in history:
+        #     result.append(elem.get_small_data())
+        #
+        return results

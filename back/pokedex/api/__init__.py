@@ -21,7 +21,7 @@ def register_api(app):
     @app.route("/")
     def get_my_ip():
         ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-        request_data={'method': request.method, 'url':request.url,'ip':ip, 'parameters':request.args}
+        request_data={'method': request.method, 'url':request.url,'ip':ip, 'parameters':request.args,'user_agent':request.user_agent}
         return request_data
 
     @api_bp.before_request
