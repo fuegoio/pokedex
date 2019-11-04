@@ -167,10 +167,10 @@ class PokemonSpecies(CommonModel):
     is_baby = BooleanField()
 
     def get_egg_groups(self):
-        egg_group_list= []
-        for egg_specie in self.egg_groups_species:
-            egg_group_list.append(egg_specie.egg_group.name)
-        return egg_group_list
+        # egg_group_list= []
+        # for egg_specie in self.egg_groups_species:
+        #     egg_group_list.append(egg_specie.egg_group.name)
+        return [egg_specie.egg_group.name for egg_specie in self.egg_groups_species]
 
     def get_pokemons(self):
         pokemons_list=[]

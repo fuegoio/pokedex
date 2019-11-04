@@ -15,7 +15,7 @@ class UserRequestsHistory(Model):
 
     class Meta:
         database = db
-        schema = 'pokemon'
+        schema = 'analytics'
 
 
 

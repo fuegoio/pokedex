@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource
 
-from pokedex.managers.species import get_species, get_species, get_pokemons_of_species, get_specie, add_variety, get_egg_groups, get_species_of_egg_groups #get_pokemons_from_specie, add_pokemon_to_specie, get_specie_by_name#, add_specie
+from pokedex.managers.species import get_specie_by_name, get_species, get_pokemons_of_species, get_specie, add_variety, get_egg_groups, get_species_of_egg_groups #get_pokemons_from_specie, add_pokemon_to_specie, get_specie_by_name#, add_specie
 #from pokedex.managers.pokemons import get_pokemon_by_name
 
 class Species(Resource):
@@ -41,10 +41,29 @@ class EggGroups(Resource):
         show_pokemons = request.args.get('pokemons', 'false') == 'true'
 
         list_egg_groups=get_egg_groups()
-        print(get_species_of_egg_groups(list_egg_groups))
-        results = [egg_group.get_small_data(show_species,show_pokemons) for egg_group in list_egg_groups]
+        # print(get_species_of_egg_groups(list_egg_groups))
+        results = [egg_group.get_small_data() for egg_group in list_egg_groups]
+        # results = [egg_group.get_small_data(show_species,show_pokemons) for egg_group in list_egg_groups]
+
+
+
+        if show_species:
+            species_by_egg = get_species_of_egg_groups(list_egg_groups)
+            for egg_group in results:
+                egg_group['species'] = [p.name for p in species_by_egg[egg_group['id']]]
+                # species = get_species(egg_group)
+                test = [specie.get_small_data() for specie in species]
+                if show_pokemons:
+                    pokemons_by_species = get_pokemons_of_species(species_by_egg[egg_group['id']])
+                    print(pokemons_by_species)
+
+                    for specie in egg_group['species']:
+                    #     print(specie)
+                        # results['pokemons'] = [p.name for p in pokemons_by_species[get_specie_by_name(specie)]]
+
 
         return results
+
 
 
 
