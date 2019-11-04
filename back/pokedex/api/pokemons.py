@@ -7,7 +7,7 @@ from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, crea
 
 class Pokemons(Resource):
     def get(self):
-        print("ciao")
+        # print("ciao")
         query = request.args['query']
         ask_effect = request.args.get('effect', 'false') == 'true'
         pokemons_matching = search_pokemons(query, type=None)

@@ -9,6 +9,7 @@ from .pokemons import Pokemon, Pokemons
 from .species import Species, Specie
 from .types import Types
 # from .species import Species, Specie, EggGroups
+from .egg_groups import EggGroups
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
