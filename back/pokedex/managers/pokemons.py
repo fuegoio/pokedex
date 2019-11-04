@@ -1,5 +1,6 @@
 import requests
 from playhouse.shortcuts import update_model_from_dict
+from peewee import fn
 
 from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes
 
@@ -145,3 +146,39 @@ def delete_pokemon(name):
     pokemon = get_pokemon_by_name(name)
     pokemon.delete_instance(recursive=True)
     return True
+
+def get_stat_average():
+    # query = Pokemon.select(Pokemon.hp, Pokemon.special_attack, Pokemon.defense, Pokemon.attack, Pokemon.special_defense, Pokemon.speed, )
+    average_stats=[]
+    query = Pokemon.select(fn.AVG(Pokemon.hp).alias('hp_avg'),
+                           fn.AVG(Pokemon.special_attack).alias('special_attack_avg'),
+                           fn.AVG(Pokemon.defense).alias('defense_avg'),
+                           fn.AVG(Pokemon.attack).alias('attack_avg'),
+                           fn.AVG(Pokemon.special_defense).alias('special_defense_avg'),
+                           fn.AVG(Pokemon.speed).alias('speed_avg'),
+                           )
+
+
+        # Sample.counter,
+        # Sample.value,
+        # fn.AVG(Sample.value).over(partition_by=[Sample.counter]).alias('cavg'))
+    for sample in query:
+        sample_dict={'hp_avg': sample.hp_avg,'special_attack_avg': sample.special_attack_avg,
+                     'defense_avg':sample.defense_avg,'attack_avg':sample.attack_avg, 'special_defense_avg': sample.special_defense_avg,
+                     'speed_avg':sample.special_defense_avg}
+
+
+        average_stats.append(sample_dict)
+
+    return average_stats
+
+    #
+    #
+    # stats=Pokemon.select().where(Pokemon.name.contains(query)).limit(20)
+    #
+    # def stats(self):
+    #     return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
+    #             'special-defense': self.special_defense, 'speed': self.speed}
+
+
+    return

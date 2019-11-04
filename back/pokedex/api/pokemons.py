@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 
 from pokedex.managers.analytics import add_pokemon_search_history
-from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, create_pokemon, delete_pokemon
+from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, create_pokemon, delete_pokemon, get_stat_average
 # from pokedex.managers.types import get_list_types, get_types
 
 class Pokemons(Resource):
@@ -46,7 +46,9 @@ class Pokemon(Resource):
         return result
 
 
-
+class Stats(Resource):
+    def get(self):
+        return get_stat_average()
 
 #
 # class Types(Resource):

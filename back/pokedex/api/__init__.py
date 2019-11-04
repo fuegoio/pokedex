@@ -5,7 +5,7 @@ from flask_restful import Api
 from pokedex.models.database import db
 from pokedex.managers.analytics import add_request_history
 
-from .pokemons import Pokemon, Pokemons
+from .pokemons import Pokemon, Pokemons, Stats
 from .species import Species, Specie
 from .types import Types
 # from .species import Species, Specie, EggGroups
@@ -41,5 +41,6 @@ def register_api(app):
     api.add_resource(Types, '/types')
     api.add_resource(EggGroups, '/egg-groups')
     api.add_resource(UserAgent, '/history')
+    api.add_resource(Stats, '/stats')
 
     app.register_blueprint(api_bp, url_prefix="/api/v1")
