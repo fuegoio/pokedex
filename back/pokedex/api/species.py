@@ -1,128 +1,91 @@
-from flask import request
-from flask_restful import Resource
+from typing import List
 
-from pokedex.managers.species import get_specie_by_name, get_species, get_pokemons_of_species, get_specie, add_variety, get_egg_groups, get_species_of_egg_groups #get_pokemons_from_specie, add_pokemon_to_specie, get_specie_by_name#, add_specie
-#from pokedex.managers.pokemons import get_pokemon_by_name
+import requests
 
-class Species(Resource):
-    def get(self):
-        pokemons = request.args.get('pokemons', 'false') == 'true'
-        egg_group = request.args.get('egg-group', None)
-
-        species = get_species(egg_group)
-        results = [specie.get_small_data() for specie in species]
-        if pokemons:
-            pokemons_by_species = get_pokemons_of_species(species)
-            for specie in results:
-                specie['pokemons'] = [p.name for p in pokemons_by_species[specie['id']]]
-
-        return results
-
-    def put(self):
-        data = request.json
-        variety = add_variety(data['specie'], data['pokemon'], data.get('is_default', False))
-        return variety.get_small_data()
+from pokedex.models.pokemon import PokemonSpecies, EggGroup, PokemonSpeciesEggGroups, PokemonSpeciesVariety, Pokemon
 
 
-class Specie(Resource):
-    def get(self, specie_id):
-        specie = get_specie(specie_id)
-        results = specie.get_small_data()
+def load_pokemon_species_from_api(name):
+    request = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{name}')
+    data = request.json()
 
-        pokemons_by_species = get_pokemons_of_species([specie])
-        results['pokemons'] = [p.get_small_data() for p in pokemons_by_species[specie.id]]
+    species = PokemonSpecies.get_or_none(name=name)
+    if species is None:
+        db_data = {'name': data['name'],
+                   'order': data['order'],
+                   'gender_rate': data['gender_rate'],
+                   'capture_rate': data['capture_rate'],
+                   'base_happiness': data['base_happiness'],
+                   'is_baby': data['is_baby']}
+        species = PokemonSpecies.create(**db_data)
 
-        return results
+    PokemonSpeciesEggGroups.delete().where(PokemonSpeciesEggGroups.pokemon_species == species).execute()
+    for api_egg_group in data['egg_groups']:
+        egg_group = EggGroup.get_or_none(name=api_egg_group['name'])
+        PokemonSpeciesEggGroups.create(pokemon_species=species, egg_group=egg_group)
 
+    PokemonSpeciesVariety.delete().where(PokemonSpeciesVariety.pokemon_species == species).execute()
+    for variety in data['varieties']:
+        pokemon = Pokemon.get_or_none(name=variety['pokemon']['name'])
+        PokemonSpeciesVariety.create(pokemon_species=species, is_default=variety['is_default'], pokemon=pokemon)
 
-class EggGroups(Resource):
-    def get(self):
-        show_species = request.args.get('species', 'false') == 'true'
-        show_pokemons = request.args.get('pokemons', 'false') == 'true'
-
-        list_egg_groups=get_egg_groups()
-        # print(get_species_of_egg_groups(list_egg_groups))
-        results = [egg_group.get_small_data() for egg_group in list_egg_groups]
-        # results = [egg_group.get_small_data(show_species,show_pokemons) for egg_group in list_egg_groups]
-
-
-
-        if show_species:
-            species_by_egg = get_species_of_egg_groups(list_egg_groups)
-            for egg_group in results:
-                egg_group['species'] = [p.name for p in species_by_egg[egg_group['id']]]
-                # species = get_species(egg_group)
-                test = [specie.get_small_data() for specie in species]
-                if show_pokemons:
-                    pokemons_by_species = get_pokemons_of_species(species_by_egg[egg_group['id']])
-                    print(pokemons_by_species)
-
-                    for specie in egg_group['species']:
-                    #     print(specie)
-                        # results['pokemons'] = [p.name for p in pokemons_by_species[get_specie_by_name(specie)]]
+    return species
 
 
-        return results
+def load_pokemons_species_from_api():
+    i = 0
+
+    next_page = 'https://pokeapi.co/api/v2/pokemon-species/'
+    while next_page is not None:
+        request = requests.get(next_page)
+        data = request.json()
+
+        next_page = data['next']
+
+        for species in data['results']:
+            load_pokemon_species_from_api(species['name'])
+            i += 1
+
+        print(f'{i} species loaded.')
+
+    return i
 
 
+def get_species(egg_group=None, limit=None):
+    species = PokemonSpecies.select().limit(limit)
+
+    if egg_group is not None:
+        egg_group = EggGroup.get_or_none(name=egg_group)
+        if egg_group is not None:
+            species = species.join(PokemonSpeciesEggGroups).where(PokemonSpeciesEggGroups.egg_group == egg_group)
+
+    return species
 
 
+def get_specie(specie_id):
+    specie = PokemonSpecies.get_or_none(id=specie_id)
+    return specie
 
 
+def get_pokemons_of_species(species):
+    pokemons = PokemonSpeciesVariety.select(PokemonSpeciesVariety, Pokemon).join(Pokemon).where(
+        PokemonSpeciesVariety.pokemon_species << species)
+
+    pokemons_by_specie = {}
+    for pokemon in pokemons:
+        if pokemon.pokemon_species.id not in pokemons_by_specie.keys():
+            pokemons_by_specie[pokemon.pokemon_species.id] = []
+        pokemons_by_specie[pokemon.pokemon_species.id].append(pokemon.pokemon)
+
+    return pokemons_by_specie
 
 
-# def get(self):
-#     pokemons = request.args.get('pokemons', 'false') == 'true'
-#     species = get_species()
-#
-#     result = []
-#     for specie in species:
-#         specie_result = specie.get_small_data()
-#
-#         if pokemons:
-#             specie_result['pokemons'] = []
-#             pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
-#             for pokemon in pokemons_of_this_specie:
-#                 specie_result['pokemons'].append(pokemon.name)
-#
-#         result.append(specie_result)
-#     return result
+def add_variety(specie_id, pokemon_id, is_default=False):
+    variety = PokemonSpeciesVariety.get_or_none(pokemon_species=specie_id, pokemon=pokemon_id)
+    if variety is None:
+        variety = PokemonSpeciesVariety.create(pokemon_species=specie_id, is_default=is_default, pokemon=pokemon_id)
+    else:
+        variety.is_default = is_default
+        variety.save()
 
-# def get(self,specie_name):
-#     species = get_species(specie_name)
-#     result = []
-#     for specie in species:
-#         specie_result = {'specie': specie.name}
-#         specie_result['pokemons'] = []
-#         pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
-#         for pokemon in pokemons_of_this_specie:
-#             specie_result['pokemons'].append(pokemon.get_small_data())
-#         result.append(specie_result)
-#     return result
-
-
-# pokemon_name = request.json['pokemon']
-# pokemon = get_pokemon_by_name(pokemon_name)
-# if pokemon is None:
-#     return {'msg': 'Pokeon not found'}, 404
-# specie_name = request.json['specie']
-# specie = get_specie_by_name(specie_name)
-# if specie is None:
-#     return {'msg': 'Specie not found'}, 404
-# add_pokemon_to_specie(specie, pokemon)
-# result = []
-# specie_result = {'specie': specie.name}
-# specie_result['pokemons'] = []
-# pokemons_of_this_specie = get_pokemons_from_specie(specie.id)
-# for pokemon in pokemons_of_this_specie:
-#     specie_result['pokemons'].append(pokemon.get_small_data())
-# result.append(specie_result)
-#
-# return result
-
-
-# def put(self):
-#     name = request.json['name']
-#     generation_name = request.json['generation']
-#     new_specie = add_specie(name, generation_name)
-#     return new_specie.get_small_data()
+    return variety
