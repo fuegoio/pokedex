@@ -92,15 +92,11 @@ class Type(CommonModel):
     name = CharField()
     generation = ForeignKeyField(Generation)
 
-    def get_small_data(self):
-        return {'id': self.id, 'name': self.name,
-                'generation': self.generation.name}
-
 
 class PokemonTypes(CommonModel):
     id = PrimaryKeyField()
-    pokemon = ForeignKeyField(Pokemon, backref='types')
-    type = ForeignKeyField(Type, backref='pokemons')
+    pokemon = ForeignKeyField(Pokemon)
+    type = ForeignKeyField(Type)
     slot = IntegerField()
 
 
@@ -166,40 +162,18 @@ class PokemonSpecies(CommonModel):
     base_happiness = IntegerField()
     is_baby = BooleanField()
 
-    def get_egg_groups(self):
-        # egg_group_list= []
-        # for egg_specie in self.egg_groups_species:
-        #     egg_group_list.append(egg_specie.egg_group.name)
-        return [egg_specie.egg_group.name for egg_specie in self.egg_groups_species]
-
-    def get_pokemons(self):
-        pokemons_list=[]
-        for specie_variety in self.pokemons_species_varieties:
-            pokemons_list.append(specie_variety.pokemon.name)
-        return pokemons_list
-
-
-
-
-    def get_small_data(self):
-
-        return {'id': self.id, 'name': self.name,
-                'order': self.order, 'gender_rate': self.gender_rate,
-                'capture_rate': self.capture_rate, 'base_happiness': self.base_happiness,
-                'is_baby': self.is_baby, 'egg_groups': self.get_egg_groups()}
-
 
 class PokemonSpeciesVariety(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies,backref='pokemons_species_varieties')
+    pokemon_species = ForeignKeyField(PokemonSpecies)
     is_default = BooleanField()
     pokemon = ForeignKeyField(Pokemon)
 
 
 class PokemonSpeciesEggGroups(CommonModel):
     id = PrimaryKeyField()
-    pokemon_species = ForeignKeyField(PokemonSpecies, backref='egg_groups_species')
-    egg_group = ForeignKeyField(EggGroup, backref='pokemon_species_eggs')
+    pokemon_species = ForeignKeyField(PokemonSpecies)
+    egg_group = ForeignKeyField(EggGroup)
 
 
 with db:

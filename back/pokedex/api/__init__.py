@@ -6,6 +6,7 @@ from pokedex.models.database import db
 from pokedex.managers.users import add_request_history
 
 from .pokemons import Pokemon, Pokemons
+from .species import Species, Specie
 from .types import Types
 from .species import Species, Specie, EggGroups
 

@@ -114,6 +114,7 @@ def search_pokemons(query, type):
         pokemons = Pokemon.select().where(Pokemon.name.contains(query)).limit(20)
 
 
+
     if type is not None:
         filtered_pokemons = []
         for pokemon in pokemons:

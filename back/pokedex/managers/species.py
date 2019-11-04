@@ -1,3 +1,5 @@
+from typing import List
+
 import requests
 
 from pokedex.models.pokemon import PokemonSpecies, EggGroup, PokemonSpeciesEggGroups, PokemonSpeciesVariety, Pokemon
@@ -20,7 +22,7 @@ def load_pokemon_species_from_api(name):
     PokemonSpeciesEggGroups.delete().where(PokemonSpeciesEggGroups.pokemon_species == species).execute()
     for api_egg_group in data['egg_groups']:
         egg_group = EggGroup.get_or_none(name=api_egg_group['name'])
-        link = PokemonSpeciesEggGroups.create(pokemon_species=species, egg_group=egg_group)
+        PokemonSpeciesEggGroups.create(pokemon_species=species, egg_group=egg_group)
 
     PokemonSpeciesVariety.delete().where(PokemonSpeciesVariety.pokemon_species == species).execute()
     for variety in data['varieties']:
@@ -49,63 +51,15 @@ def load_pokemons_species_from_api():
     return i
 
 
-def get_species(egg_group=None, search=None, unused=False):
-    if search is None:
-        search = ""
-
-    species = []
-    for specie in PokemonSpecies.select():
-        if search in specie.name:
-            species.append(specie)
-
-    if unused:
-        species = [specie for specie in species if len(specie.pokemons) == 0]
+def get_species(egg_group=None, limit=None):
+    species = PokemonSpecies.select().limit(limit)
 
     if egg_group is not None:
-        filtered_species = []
-        for specie in species:
-            # types = [t.type.name for t in pokemon.types]
-            eggroups = []
-
-            poke_egg_group_species=PokemonSpeciesEggGroups.select().where(PokemonSpeciesEggGroups.pokemon_species==specie)
-            for egg_specie in poke_egg_group_species:
-
-                egggroup_name = egg_specie.egg_group.name
-                eggroups.append(egggroup_name)
-
-            if egg_group in eggroups:
-                filtered_species.append(specie)
-        return filtered_species
-
-
-
+        egg_group = EggGroup.get_or_none(name=egg_group)
+        if egg_group is not None:
+            species = species.join(PokemonSpeciesEggGroups).where(PokemonSpeciesEggGroups.egg_group == egg_group)
 
     return species
-
-
-def get_pokemons_from_specie(specie_id):
-    pokemons = []
-    pokemon_species_varieties = PokemonSpeciesVariety.select(PokemonSpeciesVariety, Pokemon).join(Pokemon).where(PokemonSpeciesVariety.pokemon_species == specie_id)
-    for pokemon_specie_variety in pokemon_species_varieties:
-        pokemons.append(pokemon_specie_variety.pokemon)
-    return pokemons
-
-
-def get_specie_by_name(name):
-    specie = PokemonSpecies.get_or_none(name=name)
-    return specie
-
-# def add_specie(name, generation_name):
-#     # generation = Generation.get_or_none(Generation.name == generation_name)
-#     # if generation is None:
-#     #     generation = Generation.create(name=generation_name)
-#
-#     new_specie = PokemonSpecies.create(name=name, generation=generation)
-#     return new_specie
-
-def add_pokemon_to_specie(specie,pokemon):
-    PokemonSpeciesVariety.create(pokemon_species=specie.id, is_default='false', pokemon=pokemon.id)
-
 
 
 def get_specie(specie_id):
@@ -135,24 +89,3 @@ def add_variety(specie_id, pokemon_id, is_default=False):
         variety.save()
 
     return variety
-
-def get_egg_groups():
-    egggroup=EggGroup.select()
-    return egggroup
-
-def get_egg_group_by_name(name):
-    egggroup = EggGroup.select(EggGroup.name==name)
-    return egggroup
-
-
-def get_species_of_egg_groups(egg_groups):
-    species_join_eggs = PokemonSpeciesEggGroups.select(PokemonSpeciesEggGroups, PokemonSpecies).join(PokemonSpecies).where(
-        PokemonSpeciesEggGroups.egg_group << egg_groups)
-
-    species_by_egg = {}
-    for specie_egg in species_join_eggs:
-        if specie_egg.egg_group.id not in species_by_egg.keys():
-            species_by_egg[specie_egg.egg_group.id] = []
-        species_by_egg[specie_egg.egg_group.id].append(specie_egg.pokemon_species)
-
-    return species_by_egg
