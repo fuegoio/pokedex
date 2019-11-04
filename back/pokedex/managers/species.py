@@ -89,3 +89,4 @@ def add_variety(specie_id, pokemon_id, is_default=False):
         variety.save()
 
     return variety
+

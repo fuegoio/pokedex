@@ -8,7 +8,7 @@ from pokedex.managers.users import add_request_history
 from .pokemons import Pokemon, Pokemons
 from .species import Species, Specie
 from .types import Types
-from .species import Species, Specie, EggGroups
+# from .species import Species, Specie, EggGroups
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
