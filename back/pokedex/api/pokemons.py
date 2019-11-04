@@ -14,8 +14,10 @@ class Pokemons(Resource):
         # type_query = request.args['type']
 
         ask_effect = request.args.get('effect', 'false') == 'true'
+        ask_shape = request.args.get('shape', 'false') == 'true'
         pokemons_matching = search_pokemons(query, type=type_query)
-        pokemons = [pokemon.get_small_data(ask_effect) for pokemon in pokemons_matching]
+        pokemons = [pokemon.get_small_data(ask_effect, ask_shape) for pokemon in pokemons_matching]
+
 
         add_pokemon_search_history(request.remote_addr, query)
         
@@ -29,11 +31,12 @@ class Pokemons(Resource):
 
 class Pokemon(Resource):
     def get(self, pokemon_name):
+        ask_shape = request.args.get('shape', 'false') == 'true'
         pokemon = get_pokemon_by_name(pokemon_name)
         if pokemon is None:
             return {'msg': 'Not found'}, 404
 
-        return pokemon.get_small_data()
+        return pokemon.get_small_data(ask_shape)
 
     def patch(self, pokemon_name):
         return 'panic', 500

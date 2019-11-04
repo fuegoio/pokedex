@@ -47,15 +47,6 @@ class Pokemon(CommonModel):
         return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,
                 'special-defense': self.special_defense, 'speed': self.speed}
 
-    def get_small_data(self,ask_effect='false'):
-        if ask_effect is True:
-            return {"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
-                    'sprite_front': self.sprite_front,'effects': self.get_abilities_effect()}
-        else:
-            return {"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
-                    'sprite_front': self.sprite_front}
-
-
     def get_abilities_effect(self):
         abilities_effects_list= []
         for pokemon_ability in self.abilities:
@@ -64,6 +55,28 @@ class Pokemon(CommonModel):
                 effects_list.append(ability_effect.effect.effect)
             abilities_effects_list.append(effects_list)
         return abilities_effects_list
+
+
+
+
+    def get_small_data(self,ask_effect='false',ask_shape='false'):
+
+        pokedata={"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
+                    'sprite_front': self.sprite_front}
+
+        if ask_effect is True:
+            pokedata['effects']= self.get_abilities_effect()
+
+        if ask_shape is True:
+            pokedata['shapes']= [poke_forms.name for poke_forms in self.ref_shapes]
+
+
+
+        return pokedata
+
+
+
+
 
 
 class Ability(CommonModel):
@@ -109,7 +122,7 @@ class PokemonForm(CommonModel):
     is_battle_only = BooleanField()
     is_mega = BooleanField()
     form_name = CharField()
-    pokemon = ForeignKeyField(Pokemon)
+    pokemon = ForeignKeyField(Pokemon, backref='ref_shapes')
 
 
 class EggGroup(CommonModel):
@@ -140,7 +153,6 @@ class EggGroup(CommonModel):
 
 
         if show_species is True:
-
             result['species']= self.get_species()
 
 
