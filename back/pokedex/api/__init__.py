@@ -3,13 +3,14 @@ from flask_restful import Api
 
 
 from pokedex.models.database import db
-from pokedex.managers.users import add_request_history
+from pokedex.managers.analytics import add_request_history
 
 from .pokemons import Pokemon, Pokemons
 from .species import Species, Specie
 from .types import Types
 # from .species import Species, Specie, EggGroups
 from .egg_groups import EggGroups
+from .useragents import UserAgent
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -39,4 +40,6 @@ def register_api(app):
     api.add_resource(Specie, '/specie/<specie_id>')
     api.add_resource(Types, '/types')
     api.add_resource(EggGroups, '/egg-groups')
+    api.add_resource(UserAgent, '/history')
+
     app.register_blueprint(api_bp, url_prefix="/api/v1")

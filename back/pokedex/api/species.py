@@ -35,5 +35,3 @@ class Specie(Resource):
         results['pokemons'] = [p.get_small_data() for p in pokemons_by_species[specie.id]]
 
         return results
-
-
