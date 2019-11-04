@@ -7,10 +7,14 @@ from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, crea
 
 class Pokemons(Resource):
     def get(self):
-        # print("ciao")
+
         query = request.args['query']
+        # query = request.args.get('query', "")
+        type_query= request.args.get('type', "")
+        # type_query = request.args['type']
+
         ask_effect = request.args.get('effect', 'false') == 'true'
-        pokemons_matching = search_pokemons(query, type=None)
+        pokemons_matching = search_pokemons(query, type=type_query)
         pokemons = [pokemon.get_small_data(ask_effect) for pokemon in pokemons_matching]
 
         add_pokemon_search_history(request.remote_addr, query)
