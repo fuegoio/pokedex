@@ -114,8 +114,6 @@ def search_pokemons(query, ability_query=None, type_query=None):
     else:
         pokemons = Pokemon.select().where(Pokemon.name.contains(query))
 
-
-
     if type_query is not None:
         filtered_pokemons = []
         for pokemon in pokemons:
@@ -144,8 +142,6 @@ def search_pokemons(query, ability_query=None, type_query=None):
                 filtered_pokemons.append(pokemon)
         pokemons = filtered_pokemons
 
-
-
     return pokemons[:10]
 
 
@@ -157,14 +153,21 @@ def edit_pokemon_stats(name, stat, new_value):
 
     return pokemon
 
+def edit_pokemon(pokemon, data):
+
+
+    pokemon.update(**data).execute()
+
+    return pokemon
+
 
 def delete_pokemon(name):
     pokemon = get_pokemon_by_name(name)
     pokemon.delete_instance(recursive=True)
     return True
 
-def get_stat_average():
 
+def get_stat_average():
     query = Pokemon.select(fn.AVG(Pokemon.hp).alias('hp_avg'),
                            fn.AVG(Pokemon.special_attack).alias('special_attack_avg'),
                            fn.AVG(Pokemon.defense).alias('defense_avg'),
@@ -173,13 +176,11 @@ def get_stat_average():
                            fn.AVG(Pokemon.speed).alias('speed_avg'),
                            )
 
-
-        # fn.AVG(Sample.value).over(partition_by=[Sample.counter]).alias('cavg'))
-    sample=query[0]
-    sample_dict={'hp_avg': sample.hp_avg,'special_attack_avg': sample.special_attack_avg,
-                     'defense_avg':sample.defense_avg,'attack_avg':sample.attack_avg, 'special_defense_avg': sample.special_defense_avg,
-                     'speed_avg':sample.special_defense_avg}
-
-
+    # fn.AVG(Sample.value).over(partition_by=[Sample.counter]).alias('cavg'))
+    sample = query[0]
+    sample_dict = {'hp_avg': sample.hp_avg, 'special_attack_avg': sample.special_attack_avg,
+                   'defense_avg': sample.defense_avg, 'attack_avg': sample.attack_avg,
+                   'special_defense_avg': sample.special_defense_avg,
+                   'speed_avg': sample.special_defense_avg}
 
     return sample_dict
