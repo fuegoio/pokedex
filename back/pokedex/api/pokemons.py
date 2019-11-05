@@ -11,11 +11,12 @@ class Pokemons(Resource):
         query = request.args['query']
         # query = request.args.get('query', "")
         type_query= request.args.get('type', None)
-        # type_query = request.args['type']
+        ability_query = request.args.get('ability', None)
+
 
         ask_effect = request.args.get('effect', 'false') == 'true'
         ask_shape = request.args.get('shape', 'false') == 'true'
-        pokemons_matching = search_pokemons(query, type=type_query)
+        pokemons_matching = search_pokemons(query, ability_query, type_query)
         pokemons = [pokemon.get_small_data(ask_effect, ask_shape) for pokemon in pokemons_matching]
 
 

@@ -107,16 +107,16 @@ def load_all_pokemons_from_api():
     return i
 
 
-def search_pokemons(query, type):
+def search_pokemons(query, ability_query=None, type_query=None):
     query = query.lower()
     if query is 'all':
-        pokemons = Pokemon.select().limit(10)
+        pokemons = Pokemon.select()
     else:
-        pokemons = Pokemon.select().where(Pokemon.name.contains(query)).limit(10)
+        pokemons = Pokemon.select().where(Pokemon.name.contains(query))
 
 
 
-    if type is not None:
+    if type_query is not None:
         filtered_pokemons = []
         for pokemon in pokemons:
             # types = [t.type.name for t in pokemon.types]
@@ -126,11 +126,27 @@ def search_pokemons(query, type):
                 type_name = pokemontype.type.name
                 types.append(type_name)
 
-            if type in types:
+            if type_query in types:
                 filtered_pokemons.append(pokemon)
-        return filtered_pokemons
+        pokemons = filtered_pokemons
 
-    return pokemons
+    if ability_query is not None:
+        filtered_pokemons = []
+        for pokemon in pokemons:
+            # types = [t.type.name for t in pokemon.types]
+            abilities = []
+            pokemonabilities_de_ce_pokemon = PokemonAbilities.select().where(PokemonAbilities.pokemon == pokemon)
+            for pokemonability in pokemonabilities_de_ce_pokemon:
+                ability_name = pokemonability.ability.name
+                abilities.append(ability_name)
+
+            if ability_query in abilities:
+                filtered_pokemons.append(pokemon)
+        pokemons = filtered_pokemons
+
+
+
+    return pokemons[:10]
 
 
 def edit_pokemon_stats(name, stat, new_value):

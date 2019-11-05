@@ -56,13 +56,17 @@ class Pokemon(CommonModel):
             abilities_effects_list.append(effects_list)
         return abilities_effects_list
 
+    @property
+    def get_abilities(self):
+        return [pokemon_ability.ability.name for pokemon_ability in self.abilities]
+
 
 
 
     def get_small_data(self,ask_effect='false',ask_shape='false'):
 
         pokedata={"id": self.id, "name": self.name, **self.stats, 'sprite_back': self.sprite_back,
-                    'sprite_front': self.sprite_front}
+                    'sprite_front': self.sprite_front, 'abilities': self.get_abilities}
 
         if ask_effect is True:
             pokedata['effects']= self.get_abilities_effect()
