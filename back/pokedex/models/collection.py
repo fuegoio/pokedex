@@ -37,7 +37,6 @@ class PokemonCollection(CommonModel):
 
 
 
-
     # pokemon_sprite_back = CharField()
     # pokemon_sprite_front = CharField()
 
@@ -57,23 +56,33 @@ class PokemonMatch(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
-
-
-class PokemonPlayer(CommonModel):
-    id=PrimaryKeyField()
+    player = ForeignKeyField(User)
     match=ForeignKeyField(Match)
-    pokemon=ForeignKeyField(PokemonMatch)
+
+    # def take_damages(self, attack):
+    #     damages = attack - self.defense
+    #     if damages < 0:
+    #         damages = 0
+    #     old_hp = self.hp
+    #     self.shp = self.hp - damages
+    #     if self.hp <= 0:
+    #         self.hp = 0
+    #     # else:
+    #     #     print("\t>", self.name, "hp: ", old_hp, "-->", self.hp)
+    #     return self.hp
 
 
 
-
-
-
-
-
+# class PokemonPlayer(CommonModel):
+#     id=PrimaryKeyField()
+#     player=ForeignKeyField(Match)
+#     pokemon=ForeignKeyField(PokemonMatch)
 
 
 with db:
     User.create_table(fail_silently=True)
     Collection.create_table(fail_silently=True)
     PokemonCollection.create_table(fail_silently=True)
+    Match.create_table(fail_silently=True)
+    PokemonMatch.create_table(fail_silently=True)
+    # PokemonPlayer.create_table(fail_silently=True)

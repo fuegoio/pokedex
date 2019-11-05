@@ -42,6 +42,8 @@ class Pokemon(CommonModel):
     sprite_back = CharField()
     sprite_front = CharField()
 
+
+
     @property
     def stats(self):
         return {'hp': self.hp, 'special-attack': self.special_attack, 'defense': self.defense, 'attack': self.attack,

@@ -41,7 +41,7 @@ class Collection(Resource):
         pokemon_name = request.args['pokemon']
         pokemon = get_pokemon_by_name(pokemon_name)
         if pokemon is None:
-            return {'msg': 'Not found'}, 404
+            return {'msg': 'Pokemon Not found'}, 404
         else:
             add_pokemon_to_collection(pokemon, collection)
             return "%s added to %s" % (pokemon.name, collection.name)
