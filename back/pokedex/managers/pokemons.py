@@ -110,9 +110,9 @@ def load_all_pokemons_from_api():
 def search_pokemons(query, type):
     query = query.lower()
     if query is 'all':
-        pokemons = Pokemon.select()
+        pokemons = Pokemon.select().limit(10)
     else:
-        pokemons = Pokemon.select().where(Pokemon.name.contains(query)).limit(20)
+        pokemons = Pokemon.select().where(Pokemon.name.contains(query)).limit(10)
 
 
 
