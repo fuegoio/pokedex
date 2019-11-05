@@ -33,6 +33,11 @@ class PokemonCollection(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
+
+
+
+
+
     # pokemon_sprite_back = CharField()
     # pokemon_sprite_front = CharField()
 

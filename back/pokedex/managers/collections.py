@@ -23,13 +23,13 @@ def add_pokemon_to_collection(pokemon, collection):
         collection=collection,
 
         pokemon_id=pokemon.id,
-        pokemon_name=pokemon.name,
-        pokemon_hp=pokemon.hp,
-        pokemon_special_attack=pokemon.special_attack,
-        pokemon_defense=pokemon.defense,
-        pokemon_attack=pokemon.attack,
-        pokemon_special_defense=pokemon.special_defense,
-        pokemon_speed=pokemon.speed,
+        name=pokemon.name,
+        hp=pokemon.hp,
+        special_attack=pokemon.special_attack,
+        defense=pokemon.defense,
+        attack=pokemon.attack,
+        special_defense=pokemon.special_defense,
+        speed=pokemon.speed,
     )
 
 def delete_pokemon_from_collection(pokemon, collection):
