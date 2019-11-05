@@ -7,6 +7,9 @@ from pokedex.models.collection import User, Collection, PokemonCollection
 def create_new_user(name):
     User.create(name=name)
 
+def get_user_by_name(user_name):
+    return User.get_or_none(name=user_name)
+
 
 def create_a_new_collection(name, user):
     Collection.create(name=name, user=user)
@@ -41,4 +44,7 @@ def delete_pokemon_from_collection(pokemon, collection):
 def get_pokemon_list(collection):
     selected_pokemons = PokemonCollection.select().where(PokemonCollection.collection == collection)
     return selected_pokemons
+
+
+
 

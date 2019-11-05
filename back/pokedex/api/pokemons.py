@@ -46,9 +46,6 @@ class Pokemon(Resource):
         edit_pokemon(pokemon, data)
         pokemon = get_pokemon_by_name(pokemon_name)
         return pokemon.get_small_data()
-
-
-
         # return 'panic', 500
 
     def delete(self, pokemon_name):
