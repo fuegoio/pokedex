@@ -26,13 +26,13 @@ class PokemonCollection(CommonModel):
     collection=ForeignKeyField(Collection)
 
     pokemon_id = FloatField()
-    pokemon_name = CharField()
-    pokemon_hp = FloatField()
-    pokemon_special_attack = FloatField()
-    pokemon_defense = FloatField()
-    pokemon_attack = FloatField()
-    pokemon_special_defense = FloatField()
-    pokemon_speed = FloatField()
+    name = CharField()
+    hp = FloatField()
+    special_attack = FloatField()
+    defense = FloatField()
+    attack = FloatField()
+    special_defense = FloatField()
+    speed = FloatField()
     # pokemon_sprite_back = CharField()
     # pokemon_sprite_front = CharField()
 
@@ -40,6 +40,32 @@ class Match(CommonModel):
     id=PrimaryKeyField()
     player1=ForeignKeyField(User)
     player2=ForeignKeyField(User)
+
+
+class PokemonMatch(CommonModel):
+    id=PrimaryKeyField()
+    pokemon_id = FloatField()
+    name = CharField()
+    hp = FloatField()
+    special_attack = FloatField()
+    defense = FloatField()
+    attack = FloatField()
+    special_defense = FloatField()
+    speed = FloatField()
+    
+
+class PokemonPlayer(CommonModel):
+    id=PrimaryKeyField()
+    match=ForeignKeyField(Match)
+    pokemon=ForeignKeyField(PokemonMatch)
+
+
+
+
+
+
+
+
 
 
 with db:

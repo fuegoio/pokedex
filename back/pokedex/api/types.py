@@ -7,7 +7,8 @@ from pokedex.managers.types import get_types, get_pokemons_from_type, add_type
 class Types(Resource):
     def get(self):
         pokemons = request.args.get('pokemons', 'false') == 'true'
-        types = get_types()
+        search= request.args.get('query')
+        types = get_types(search)
 
         result = []
         for type in types:
