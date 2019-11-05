@@ -56,5 +56,9 @@ def get_collection_by_name(collection_name):
 def get_pokemonscollection_by_name(pokemon_name, collection):
 
     pokemons_collection=PokemonCollection.select().where(PokemonCollection.collection_id==collection, PokemonCollection.name==pokemon_name)
-
     return pokemons_collection
+
+
+def get_pokemons_from_collection(collection):
+    pokemons_collections=PokemonCollection.select().where(PokemonCollection.collection==collection)
+    return pokemons_collections

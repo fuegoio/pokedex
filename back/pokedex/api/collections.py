@@ -1,6 +1,6 @@
 from flask import request
 from pokedex.managers.collections import get_pokemonscollection_by_name, delete_pokemon_from_collection, create_new_user, \
-    get_user_by_name, create_a_new_collection, get_collection_by_name, add_pokemon_to_collection
+    get_user_by_name, create_a_new_collection, get_collection_by_name, add_pokemon_to_collection, get_pokemons_from_collection
 from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, edit_pokemon
 from flask_restful import Resource
 
@@ -64,7 +64,11 @@ class Collection(Resource):
         else:
             return "%s delete from %s" % (pokemons_collection[0].name, collection.name)
 
-    def patch(self, pokemon_name):
+    def patch(self, collection_name):
+        collection = get_collection_by_name(collection_name)
+        if collection is None:
+            return {'msg': 'Collection not found'}, 404
+        pokemon_name = request.args['pokemon']
         pokemon_collection = get_pokemonscollection_by_name(pokemon_name)
         if pokemon_collection is None:
             return {'msg': 'Not found'}, 404
@@ -72,3 +76,13 @@ class Collection(Resource):
         edit_pokemon(pokemon_collection, data)
         pokemon_collection = get_pokemonscollection_by_name(pokemon_name)
         return pokemon_collection.name
+
+    def get(self, collection_name):
+        collection = get_collection_by_name(collection_name)
+        if collection is None:
+            return {'msg': 'Collection not found'}, 404
+        result=[]
+        pokemons_collection=get_pokemons_from_collection(collection)
+        for elem in pokemons_collection:
+            result.append(elem.get_small_data())
+        return result
