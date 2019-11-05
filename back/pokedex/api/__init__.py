@@ -8,13 +8,14 @@ from pokedex.managers.analytics import add_request_history
 from .pokemons import Pokemon, Pokemons, Stats
 from .species import Species, Specie
 from .types import Types
-from .collections import User
+from .collections import User, Collections, Collection
 # from .species import Species, Specie, EggGroups
 from .egg_groups import EggGroups
 from .useragents import UserAgent
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
+
 
 
 def register_api(app):
@@ -44,6 +45,9 @@ def register_api(app):
     api.add_resource(UserAgent, '/history')
     api.add_resource(Stats, '/stats')
     api.add_resource(User, '/user/<user_name>')
+    api.add_resource(Collections, '/collections')
+    api.add_resource(Collection, '/collection/<collection_name>')
+
 
 
     app.register_blueprint(api_bp, url_prefix="/api/v1")

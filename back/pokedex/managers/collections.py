@@ -12,7 +12,12 @@ def get_user_by_name(user_name):
 
 
 def create_a_new_collection(name, user):
-    Collection.create(name=name, user=user)
+    collection=Collection.get_or_none(name=name, user=user)
+    if collection is None:
+        collection=Collection.create(name=name, user=user)
+
+    return collection
+
 
 
 def add_pokemon_to_collection(pokemon, collection):
@@ -47,4 +52,5 @@ def get_pokemon_list(collection):
 
 
 
-
+def get_collection_by_name(collection_name):
+    Collection.select().where(name=collection_name)
