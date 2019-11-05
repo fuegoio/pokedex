@@ -18,7 +18,7 @@ class User(CommonModel):
 
 class Collection(CommonModel):
     id = PrimaryKeyField()
-    name = CharField()
+    name = CharField(unique=True)
     user=ForeignKeyField(User)
 
 class PokemonCollection(CommonModel):
@@ -52,7 +52,7 @@ class PokemonMatch(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
-    
+
 
 class PokemonPlayer(CommonModel):
     id=PrimaryKeyField()
