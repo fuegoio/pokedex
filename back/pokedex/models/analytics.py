@@ -16,5 +16,5 @@ class SearchHistory(CommonModel):
     search = CharField()
 
 
-with db:
-    SearchHistory.create_table(fail_silently=True)
+# with db:
+#     SearchHistory.create_table(fail_silently=True)
