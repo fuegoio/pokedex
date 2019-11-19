@@ -1,7 +1,7 @@
 import requests
 from playhouse.shortcuts import update_model_from_dict
 
-from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes
+from pokedex.models.pokemon import Pokemon, Ability, PokemonAbilities, Type, PokemonTypes, PokemonForm
 
 
 def get_pokemon_by_name(name):
@@ -106,25 +106,45 @@ def load_all_pokemons_from_api():
     return i
 
 
-def search_pokemons(query, type):
+def search_pokemons(query, type=None, ability=None, limit=None):
     query = query.lower()
-    pokemons = Pokemon.select().where(Pokemon.name.contains(query)).limit(20)
+    pokemons = Pokemon.select().where(Pokemon.name.contains(query))
+
+    if ability is not None:
+        filtered_pokemons = []
+        for pokemon in pokemons:
+            abilities = []
+            pokemons_abilities_of_this_pokemon = PokemonAbilities.select().where(
+                PokemonAbilities.pokemon == pokemon)  # possibility to limit here?
+            for pokemon_ability in pokemons_abilities_of_this_pokemon:
+                ability_name = pokemon_ability.ability.name
+                abilities.append(ability_name)
+            if ability in abilities:
+                filtered_pokemons.append(pokemon)
+        return filtered_pokemons
 
     if type is not None:
         filtered_pokemons = []
         for pokemon in pokemons:
             # types = [t.type.name for t in pokemon.types]
             types = []
-            pokemontypes_de_ce_pokemon = PokemonTypes.select().where(PokemonTypes.pokemon == pokemon)
-            for pokemontype in pokemontypes_de_ce_pokemon:
+            pokemontypes_of_this_pokemon = PokemonTypes.select().where(PokemonTypes.pokemon == pokemon)
+            for pokemontype in pokemontypes_of_this_pokemon:
                 type_name = pokemontype.type.name
                 types.append(type_name)
 
             if type in types:
                 filtered_pokemons.append(pokemon)
-        return filtered_pokemons
+        return filtered_pokemons[0:10]
 
     return pokemons
+
+def edit_stats(pokemon, hp):
+    pokemon = get_pokemon_by_name(pokemon)
+    pokemon.hp = hp
+    pokemon.save()  #insère dans la base de donnée après avoir modif en python
+
+    return pokemon
 
 
 def edit_pokemon_stats(name, stat, new_value):
@@ -140,3 +160,14 @@ def delete_pokemon(name):
     pokemon = get_pokemon_by_name(name)
     pokemon.delete_instance(recursive=True)
     return True
+
+
+def get_types_of_pokemons(pokemons):
+    types = PokemonTypes.select(PokemonTypes, Type).join(Type).where(
+        PokemonTypes.type << pokemons)
+    pokemons_by_type = {}
+    for pokemon in types:
+        if pokemon.type.id not in pokemons_by_type.keys():
+            pokemons_by_type[pokemons.type.id] = []
+        pokemons_by_type[pokemon.type.id].append(pokemon.pokemon)
+    return pokemons_by_type

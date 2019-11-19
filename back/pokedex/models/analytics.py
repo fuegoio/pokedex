@@ -9,6 +9,11 @@ class CommonModel(Model):
         schema = 'analytics'
 
 
+class UserAgent(CommonModel):
+    id = PrimaryKeyField()
+    user_agent = CharField()
+
+
 class SearchHistory(CommonModel):
     id = PrimaryKeyField()
     type = CharField()
@@ -16,5 +21,6 @@ class SearchHistory(CommonModel):
     search = CharField()
 
 
-# with db:
-#     SearchHistory.create_table(fail_silently=True)
+with db:
+    SearchHistory.create_table(fail_silently=True)
+    UserAgent.create_table(fail_silently=True)
