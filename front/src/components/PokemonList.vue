@@ -41,12 +41,12 @@
                 }
 
                 let params = {query: search};
-                axios.get('http://localhost:8000/api/v1/pokemons', {params: params}).then((response) => {
+                axios.get(process.env.API_URL + 'api/v1/pokemons', {params: params}).then((response) => {
                     this.pokemons = response.data;
                 });
             },
             updatePokemon(pokemon) {
-                axios.get('http://localhost:8000/api/v1/pokemon/' + pokemon.name).then((response) => {
+                axios.get(process.env.API_URL + 'api/v1/pokemon/' + pokemon.name).then((response) => {
                     let index_of_pokemon = this.pokemons.indexOf(pokemon);
 
                     let new_pokemon = response.data;

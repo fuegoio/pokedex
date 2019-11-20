@@ -96,14 +96,14 @@
                     this.types.push(type);
                 });
 
-                axios.get('http://localhost:8000/api/v1/types').then((response) => {
+                axios.get(process.env.API_URL + 'api/v1/types').then((response) => {
                     this.types = response.data;
                 });
 
                 this.edit = true;
             },
             editPokemon() {
-                axios.patch('http://localhost:8000/api/v1/pokemon/' + this.pokemon.name, this.pokemon_edited).then(() => {
+                axios.patch(process.env.API_URL + 'api/v1/pokemon/' + this.pokemon.name, this.pokemon_edited).then(() => {
                     this.$emit('update');
                 }).catch(() => {
                     console.log('error');
@@ -111,7 +111,7 @@
                 this.edit = false;
             },
             deletePokemon() {
-                axios.delete('http://localhost:8000/api/v1/pokemon/' + this.pokemon.name).then(() => {
+                axios.delete(process.env.API_URL + 'api/v1/pokemon/' + this.pokemon.name).then(() => {
                     this.$emit('delete');
                 });
             }
