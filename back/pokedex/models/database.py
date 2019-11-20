@@ -6,6 +6,6 @@ db = PostgresqlDatabase(
     'pokedex',
     user='pokedex',
     password='pokedex',
-    host=os.environ('DB_HOST', 'localhost'),
+    host=os.environ.get('DB_HOST', 'localhost'),
     autorollback=True
 )
