@@ -1,9 +1,11 @@
+import os
+
 from peewee import PostgresqlDatabase
 
 db = PostgresqlDatabase(
     'pokedex',
     user='pokedex',
     password='pokedex',
-    host='localhost',
+    host=os.environ('DB_HOST', 'localhost'),
     autorollback=True
 )
