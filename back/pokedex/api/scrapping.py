@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from pokedex.managers.scraping import search_data
+from pokedex.managers.scrapping import search_data
 
 
 class Datascrap(Resource):

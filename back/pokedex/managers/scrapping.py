@@ -1,7 +1,7 @@
 import requests
 from lxml import html
 from tqdm import tqdm
-from pokedex.models.scraping import Pokemonscraping, Generationscraping
+from pokedex.models.scrapping import Pokemonscraping, Generationscraping
 
 
 def search_data(query, limit=None):

@@ -74,13 +74,15 @@ def search_abilities(query, limit=None):
 def get_generation_name(generation_id):
     generation = Generation.get_by_id(generation_id)
     return generation.name
+
+
 ####################################################################################"
 def get_effects_of_abilities(abilities):
-    effects = AbilityEffects.select(AbilityEffects, VerboseEffect).join (VerboseEffect).where(
+    effects = AbilityEffects.select(AbilityEffects, VerboseEffect).join(VerboseEffect).where(
         AbilityEffects.ability << abilities)
-    effects_by_ability={}
+    effects_by_ability = {}
     for effect in effects:
         if effect.ability.id not in effects_by_ability.keys():
-            effects_by_ability[effect.ability.id]=[]
+            effects_by_ability[effect.ability.id] = []
             effects_by_ability[effect.ability.id].append(effect.effect)
     return effects_by_ability

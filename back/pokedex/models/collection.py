@@ -35,3 +35,6 @@ class PokemonCollection(CommonModel):
     attack = FloatField()
     special_defense = FloatField()
     speed = FloatField()
+
+with db:
+    Collection.create_table(fail_silently=True)

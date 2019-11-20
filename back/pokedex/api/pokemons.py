@@ -5,7 +5,8 @@ from pokedex.managers.analytics import add_pokemon_search_history
 from pokedex.managers.pokemons import search_pokemons, get_pokemon_by_name, create_pokemon, delete_pokemon,  edit_pokemon_stats
 from pokedex.managers.forms import get_forms_of_pokemons
 from pokedex.managers.abilities import get_abilities_of_pokemons
-from pokedex.managers.user_agent import add_user_agent
+from pokedex.managers.useragent import add_user_agent
+from pokedex.errors.not_found import PokemonNotFoundError
 
 
 class Pokemons(Resource):
@@ -49,7 +50,8 @@ class Pokemon(Resource):
         forms = request.args.get('forms', 'false') == 'true'
         abilities = request.args.get('abilities',None)
         if pokemon is None:
-            return {'msg': 'Not found'}, 404
+            # return {'msg': 'Not found'}, 404
+            raise PokemonNotFoundError(pokemon_name)
         pokemon = pokemon.get_small_data()
 
         if forms:
@@ -57,7 +59,7 @@ class Pokemon(Resource):
             forms_of_this_pokemon = get_forms_of_pokemons(pokemon['id'])
             for forms in forms_of_this_pokemon:
                 pokemon['forms'].append(forms.name)
-        return pokemon
+        return pokemon.get_small_data()
 
     def patch(self, pokemon_name):
         # return 'panic', 500

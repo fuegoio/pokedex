@@ -10,13 +10,19 @@ class CommonModel(Model):
 
     class Meta:
         database = db
-        schema = 'scrapping'
+        schema = 'scraping'
 
 
-class Pokemon(CommonModel):
+class Pokemonscraping(CommonModel):
+    id = PrimaryKeyField()
+    name = CharField()
+
+
+class Generationscraping(CommonModel):
     id = PrimaryKeyField()
     name = CharField()
 
 
 with db:
-    Pokemon.create_table(fail_silently=True)
+    Pokemonscraping.create_table(fail_silently=True)
+    Generationscraping.create_table(fail_silently=True)

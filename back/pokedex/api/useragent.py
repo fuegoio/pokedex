@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from pokedex.managers.user_agent import sum_requests_of_user_agent, add_user_agent
+from pokedex.managers.useragent import sum_requests_of_user_agent, add_user_agent
 
 
 class UserAgent(Resource):
